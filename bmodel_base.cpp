@@ -16,7 +16,11 @@ BmodelBase::~BmodelBase() {
     delete []scaled_inputs_;
   }
   for (size_t i = 0; i < outputs_.size(); i++) {
-    delete [] reinterpret_cast<float*>(outputs_[i]);
+    if (BM_FLOAT32 == net_info_->output_dtypes[i]) {
+      delete [] reinterpret_cast<float*>(outputs_[i]);
+    } else {
+      delete [] reinterpret_cast<signed char*>(outputs_[i]);
+    }
   }
   if (net_names_ != nullptr) {
     free(net_names_);
@@ -72,8 +76,13 @@ void BmodelBase::load_model() {
     auto &output_shape = net_info_->stages[0].output_shapes[i];
     count = static_cast<int>(bmrt_shape_count(&output_shape));
     std::cout << "output " << i << " count:" << count << std::endl;
-    float* out = new float[count];
-    outputs_.push_back(out);
+    if (BM_FLOAT32 == net_info_->output_dtypes[i]) {
+      float* out = new float[count];
+      outputs_.push_back(out);
+    } else {
+      signed char* out = new signed char[count];
+      outputs_.push_back(out);
+    }
     output_sizes_.push_back(count / output_shape.dims[0]);
   }
 

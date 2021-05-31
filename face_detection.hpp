@@ -34,7 +34,7 @@ private:
 private:
   std::shared_ptr<RetinaFacePostProcess> post_process_;
   int max_face_count_ = 50;
-  float score_threshold_ = 0.1f;
+  float score_threshold_ = 0.5f;
 };
 
 #endif /* face_detection_hpp */

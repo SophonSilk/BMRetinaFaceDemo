@@ -121,7 +121,8 @@ void FaceDetection::postprocess(vector<vector<stFaceRect> >& results) {
       if (BM_FLOAT32 == net_info_->output_dtypes[j]) {
         preds[j] = reinterpret_cast<float*>(outputs_[j]) + output_sizes_[j] * i;
       } else {
-        char* int8_ptr = reinterpret_cast<char*>(outputs_[j]) + output_sizes_[j] * i;
+        signed char* int8_ptr = reinterpret_cast<signed char*>(outputs_[j])
+                                                       + output_sizes_[j] * i;
         preds[j] = new float[output_sizes_[j]];
         for (int k = 0; k < output_sizes_[j]; k++) {
           preds[j][k] = int8_ptr[k] * net_info_->output_scales[j];
